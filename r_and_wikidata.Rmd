@@ -8,7 +8,7 @@ output:
 
 ***
 
-This is an R Notebook: a document containing code and text. A live version can be run through [MyBinder](https://mybinder.org/v2/gh/networkingarchives/r_and_wikidata/HEAD?urlpath=rstudio), which will spin up a copy of R-studio for you to use, and the source code is available on [GitHub](https://github.com/networkingarchives/r_and_wikidata). 
+This is an R Notebook: a document containing code and text. A live version can be run through [MyBinder](https://mybinder.org/v2/gh/networkingarchives/r_and_wikidata/master?urlpath=rstudio), which will spin up a copy of R-studio for you to use, and the source code is available on [GitHub](https://github.com/networkingarchives/r_and_wikidata). 
 
 Clicking on the MyBinder link above will bring you to an R-Studio instance. In the 'files' window in the bottom-right of R-studio, open the document 'r_and_wikidata.Rmd', which will open this with a live copy of the code, which can be edited and re-run. Be warned it *might* still be a bit of a steep learning curve if you have no experience with R-studio/coding languages. 
 
@@ -408,8 +408,6 @@ load('james_network')
 And finally, turn this into a network:
 
 ```{r message=FALSE, warning=FALSE}
-
-
 
  james_network %>% 
   mutate(degree = centrality_degree(mode= 'total')) %>% 
