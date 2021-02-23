@@ -1,0 +1,30 @@
+Type: Compendium
+Package: R and Wikidata
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.1
+Authors@R: 
+    person(given = "First",
+           family = "Last",
+           role = c("aut", "cre"),
+           email = "first.last@example.com")
+Description: R and Wikidata
+License: What license it uses
+Depends: 
+    dplyr,
+    ggraph,
+    igraph,
+    lubridate,
+    plyr,
+    rmarkdown,
+    rsconnect,
+    sf,
+    stringr,
+    tidygraph,
+    tidyr,
+    units,
+    WikidataQueryServiceR
+Remotes: 
+    r-spatial/sf,
+    rstudio/rmarkdown
+Encoding: UTF-8
+LazyData: true
