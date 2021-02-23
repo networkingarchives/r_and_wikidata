@@ -193,7 +193,7 @@ WHERE
   ")
 ```
 
-The map below is perhaps surprisingly European: the State Papers data itself is quite narrow, geographically, but many of the letters themselves were written by those born elsewhere - though this does only map a small, elite section of the authors and recipients of letters.  
+The map below is perhaps surprisingly European: the State Papers data itself is mostly sent from within Britain and Ireland, with some smaller clusters in the Dutch Republic and Paris, but it turns out many of the letters were actually written by individuals born right across Europe - though this does only map a small, elite section of the authors and recipients of letters.  
 
 ```{r}
 
@@ -412,8 +412,9 @@ And finally, turn this into a network:
 
 
  james_network %>% 
+  mutate(degree = centrality_degree(mode= 'total')) %>% 
   ggraph() + 
-  geom_node_point() + 
+  geom_node_point(aes(size = degree)) + 
   geom_edge_link(alpha = .3) + 
   geom_node_text(aes(label = X2), repel = T, size = 2) + 
   theme_void()
