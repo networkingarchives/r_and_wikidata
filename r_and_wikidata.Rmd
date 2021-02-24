@@ -1,5 +1,5 @@
 ---
-title: "Networking Archives and Wikidata"
+title: "Wikidata and Correspondence Archives"
 subtitle: "Enriching basic metadata with a knowledge graph"
 output:
   html_document:
