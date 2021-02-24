@@ -22,7 +22,6 @@ Depends:
     tidyr,
     WikidataQueryServiceR
 Remotes: 
-    r-spatial/sf,
     rstudio/rmarkdown
 Encoding: UTF-8
 LazyData: true
