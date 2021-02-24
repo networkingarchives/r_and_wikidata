@@ -426,13 +426,13 @@ And finally, turn this into a network:
   geom_node_point(aes(size = degree)) + 
   geom_edge_link(alpha = .3) + 
   geom_node_text(aes(label = X2), repel = T, size = 2) + 
-  theme_void()
+  theme_void() + labs(title = "Letter Network of Descendants of James I/VI found in\nState Papers Online", subtitle = "Generated using Wikidata Query Service and SPO metadata") + theme(plot.title = element_text(face = 'bold', size = 16))
 ```
 
 
 ### Some Conclusions
 
-I hope this has shown how Wikidata can add some value as both a way to populate a sparse correspondence dataset with basic metadata, and a way to construct complex queries to highlight groups of individuals in that data. It's important to note that wikidata does not claim to store facts in itself: at its core, wikidata aims to be a repository for knowledge from elsewhere - rather than storing the birth date of, say Henry Oldenburg, wikidata hopes to store the fact that, say, the *Oxford Dictionary of National Biography* records his birth year as 1619. 
+I hope this has shown how Wikidata can add some value as both a way to populate a sparse correspondence dataset with basic metadata, and a way to construct complex queries to highlight groups of individuals in that data. It's important to note that wikidata does not claim to store facts in itself: at its core, wikidata aims to be a repository for knowledge from elsewhere - rather than storing the birth date of Henry Oldenburg, wikidata hopes to store the fact that, say, the *Oxford Dictionary of National Biography* records his birth year as 1619 (this is an ideal scenario, whereas in reality much of the information currently comes from Wikipedia). 
 
 This subtle difference is important, because it means that wikidata is only as good as the references which make it up. Is it ultimately any use for scholarly work? As we've seen, only a small fraction (4,500 out of 30,000) of individuals in the State Papers have been linked to a wikipedia page, so this can only, at the moment, give us additional metadata on relatively prominent individuals. 
 
