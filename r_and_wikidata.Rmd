@@ -51,7 +51,7 @@ library(tidygraph)
 It's a very simple package with one main function, ```query_wikidata()```. Type the SPARQL query as a character string as the only argument to this function and it will return the relevant data as a dataframe. I'll try to explain it using a query which fetches all Royal Society members with a date of birth before 1700.
 
 
-```{r}
+```{r, cache=TRUE}
 
 my_query = query_wikidata("
 SELECT DISTINCT  ?item ?itemLabel
@@ -93,7 +93,7 @@ The dataset we have constructed from State Papers Online contains very minimal d
 
 For example, using wikidata one can download a list of birth and death dates for those with wikipedia links. First, download a list of *all* those on wikidata with a date of birth before 1700 and after 1500 (the Stuart State Papers begin in 1603):  
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, cache=TRUE}
 dates_of_birth = query_wikidata("
 SELECT DISTINCT  ?item ?dateOfBirth ?dateOfDeath ?article
 WHERE
@@ -170,7 +170,7 @@ The dates of birth are unsurprising, but I wonder if we are seeing the effects o
 
 Wikidata also contains geographic information, allowing us to download birthplaces (property P19) where available, along with coordinates (P625) to map them (the method used to draw the map will have to wait for another post).
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, cache=TRUE}
 birthplace  = query_wikidata("
 SELECT DISTINCT  ?item ?article ?place ?placeLabel ?coord
 WHERE
@@ -195,9 +195,9 @@ WHERE
 
 The map below is perhaps surprisingly European: the State Papers data itself is mostly sent from within Britain and Ireland, with some smaller clusters in the Dutch Republic and Paris, but it turns out many of the letters were actually written by individuals born right across Europe - though this does only map a small, elite section of the authors and recipients of letters.  
 
-```{r}
+```{r, eval=FALSE}
 
-load('worldmap')
+
 map = birthplace %>% 
   filter(article %in% spo_wikipedia_links$resource_url)%>% 
   filter(!is.na(article)) %>% 
@@ -209,6 +209,13 @@ sf_map = map %>%
   group_by(placeLabel, coordinates_longitude,coordinates_latitude ) %>% tally() %>% 
   st_as_sf(coords = c('coordinates_longitude', 'coordinates_latitude'))
 sf_map = sf_map %>% st_set_crs(4326)
+```
+```{r message=FALSE, warning=FALSE, include=FALSE}
+load('sf_map')
+```
+
+```{r}
+load('worldmap')
 
 ggplot() + geom_sf(data = worldmap, lwd = .15) + 
   geom_sf(data = sf_map, 
@@ -220,7 +227,7 @@ ggplot() + geom_sf(data = worldmap, lwd = .15) +
 
 Wikidata also has the property *Place of Death* (P20), so we can also download that information:
 
-```{r}
+```{r message=FALSE, warning=FALSE, cache=TRUE}
 deathplace  = query_wikidata("
 SELECT DISTINCT  ?item ?article ?place ?placeLabel ?coord
 WHERE
@@ -265,7 +272,7 @@ places_of_birth_death = birthplace %>%
 
 Use the sf packages to turn this into two separate datasets of points and spatial lines:  
 
-```{r}
+```{r, eval=FALSE}
 points = places_of_birth_death %>% 
   mutate(id = 1:nrow(.)) %>% 
   mutate(birth = paste0(bp_coordinates_longitude, ";", bp_coordinates_latitude)) %>% mutate(death = paste0(dp_coordinates_longitude, ";", dp_coordinates_latitude)) %>% 
@@ -288,6 +295,11 @@ points_tallied = points %>%
 
 points_tallied = points_tallied %>% 
   st_set_crs(4326)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+load( 'lines')
+load( 'points_tallied')
 ```
 
 Draw the map:  
@@ -315,7 +327,7 @@ ggplot() +
 ```
 
 
-Again, these queries can be built up, and one piece of data connected to another. A list of all those with parents born in different country to their birth place would be an interesting starting-point for understanding a second-generation diaspora network. 
+That gravitational pull towards London is striking. Again, these queries can be built up, and one piece of data connected to another. A list of all those with parents born in different country to their birth place would be an interesting starting-point for understanding a second-generation diaspora network. 
 
 ### Wikidata and EMLO  
 
@@ -323,7 +335,7 @@ Early Modern Letters Online already has good basic, structured biographical data
 
 Wikidata's data on family relations helps us to construct complex queries about family trees. We can ask, for example - how many letter authors (or recipients) in EMLO have parents who were at some point imprisoned? This following query will get us a list of everyone with the property 'imprisoned' on wikidata, plus all of their children.
 
-```{r}
+```{r message=FALSE, warning=FALSE, cache=TRUE}
 rs_q = query_wikidata ("SELECT DISTINCT  ?itemLabel ?childLabel ?article ?valueLabel ?dob WHERE
 {
 ?item wdt:P2632 ?value.
@@ -366,7 +378,7 @@ Wikidata has found thirty, including [Carew Raleigh](http://emlo.bodleian.ox.ac.
 
 With these links we can query wikidata and then pass the results to the State Papers metadata. This query, for example, downloads a list of all descendants of James VI of Scotland/James I of England, with a wikipedia page:
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, cache=TRUE}
 jamesdesc = query_wikidata('SELECT DISTINCT ?human ?humanLabel ?dob ?article
 WHERE
 {

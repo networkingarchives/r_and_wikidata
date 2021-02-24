@@ -1,0 +1,12 @@
+base
+dplyr
+tidyr
+stringr
+lubridate
+WikidataQueryServiceR
+plyr
+sf
+igraph
+ggplot2
+ggraph
+tidygraph
