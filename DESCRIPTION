@@ -21,7 +21,5 @@ Depends:
     tidygraph,
     tidyr,
     WikidataQueryServiceR
-Remotes: 
-    rstudio/rmarkdown
 Encoding: UTF-8
 LazyData: true
