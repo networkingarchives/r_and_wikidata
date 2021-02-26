@@ -4,34 +4,33 @@ subtitle: "Enriching basic metadata with a knowledge graph"
 output:
   html_document:
     df_print: paged
+bibliography: references.bib
 ---
 
-***
+------------------------------------------------------------------------
 
-This is an R Notebook: a document containing code and text. A live version can be run through [MyBinder](https://mybinder.org/v2/gh/networkingarchives/r_and_wikidata/master?urlpath=rstudio), which will spin up a copy of R-studio for you to use, and the source code is available on [GitHub](https://github.com/networkingarchives/r_and_wikidata). 
+This is an R Notebook: a document containing code and text. A live version can be run through [MyBinder](https://mybinder.org/v2/gh/networkingarchives/r_and_wikidata/master?urlpath=rstudio), which will spin up a copy of R-studio for you to use, and the source code is available on [GitHub](https://github.com/networkingarchives/r_and_wikidata).
 
-Clicking on the MyBinder link above will bring you to an R-Studio instance. In the 'files' window in the bottom-right of R-studio, open the document 'r_and_wikidata.Rmd', which will open this with a live copy of the code, which can be edited and re-run. Be warned it *might* still be a bit of a steep learning curve if you have no experience with R-studio/coding languages. 
+More info [below](#info)
 
-A few parts won't run live: as we haven't released the full dataset yet, one part of the code 'cheats', and uses a pre-processed object rather than loading up the full State Papers metadata to query directly. So you won't be able to make changes to the section which pulls letters written by descendants of James I/VI. Also, the library 'sf' won't install in the MyBinder build (it needs root priviledges to install a dependency), which means the maps cannot be made - at least for now. The rest, if loaded through myBinder or just directly through a local copy of R-Studio, can be adjusted to try other queries and cross-reference against the people records of the SPO and EMLO datasets.
 
-***
+------------------------------------------------------------------------
 
-### *Networking Archives* and Wikidata  
+### *Networking Archives* and Wikidata
 
-On the [Networking Archives](https://networkingarchives.org) project we've been using [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) IDs as unique identifiers for some of our data types. At present, we use wikidata identities to disambiguate geographic places in our dataset and wikpedia links, where available, as a unique identifier for people records.  
+On the [Networking Archives](https://networkingarchives.org) project we've been using [Wikidata](https://www.Wikidata.org/wiki/Wikidata:Main_Page) IDs as unique identifiers for some of our data types. At present, we use Wikidata identities to disambiguate geographic places in our dataset and wikpedia links, where available, as a unique identifier for people records.
 
-Wikidata is a [knowledge graph](https://en.wikipedia.org/wiki/Knowledge_graph): a type of database which stores information in what are known as triples. Data is stored as *entities*, which are connected by *properties* -  which store the relationship between entities. For example: the entity 'Henry Oldenburg' is connected to the entity 'Bremen' by the property 'Place of Birth'. Both Oldenburg and Bremen are themselves connected to many other entities through many other properties, resulting in a complex web of interrelated data.   
+Wikidata is a [knowledge graph](https://en.Wikipedia.org/wiki/Knowledge_graph): a type of database which stores information in what are known as triples. Data is stored as *entities*, which are connected by *properties* - which store the relationship between entities. For example: the entity 'Henry Oldenburg' is connected to the entity 'Bremen' by the property 'Place of Birth'. Both Oldenburg and Bremen are themselves connected to many other entities through many other properties, resulting in a complex web of interrelated data.
 
-In a dataset like that we're [making from the State Papers Online](https://networkingarchives.org/curation/), a connection, via wikipedia links, to an external knowledge graph serves as a good starting point to fill in some basic biographical data for the people in the dataset.  
+In a dataset like that we're [making from the State Papers Online](https://networkingarchives.org/curation/), a connection, via Wikipedia links, to an external knowledge graph serves as a good starting point to fill in some basic biographical data for the people in the dataset.
 
-Wikidata can be queried using a language called [SPARQL](https://www.w3.org/TR/rdf-sparql-query/). It's based on the idea of triples, which consist of a subject, predicate and object and for simple queries you fill in two parts of the triple and ask the query to return the missing part. These statements can be linked together to construct complicated queries.  
+Wikidata can be queried using a language called [SPARQL](https://www.w3.org/TR/rdf-sparql-query/). It allows you to query the triples: essentially, you fill in two parts of the triple and the missing part is returned. These statements can be linked together to construct complicated queries.
 
-### Accessing the Wikidata Query Service with R  
+### Accessing the Wikidata Query Service with R
 
-SPARQL can be used directly through the [Wikidata query service](https://query.wikidata.org/) web page or via an API with a language such as R, as I've done here.   
+SPARQL can be used directly through the [Wikidata query service](https://query.Wikidata.org/) web page or via an API with a language such as R, as I've done here.
 
-First, load the package needed, WikidataQueryServiceR, as well as some others to be used.   
-
+First, load the package needed, WikidataQueryServiceR, as well as some others to be used.
 
 ```{r include=FALSE}
 library(dplyr)
@@ -47,8 +46,7 @@ library(tidygraph)
 
 ```
 
-It's a very simple package with one main function, ```query_wikidata()```. Type the SPARQL query as a character string as the only argument to this function and it will return the relevant data as a dataframe. I'll try to explain it using a query which fetches all Royal Society members with a date of birth before 1700.
-
+It's a very simple package with one main function, `query_wikidata()`. Type the SPARQL query as a character string as the only argument to this function and it will return the relevant data as a dataframe. I'll try to explain it using a query which fetches all Royal Society members with a date of birth before 1700.
 
 ```{r, cache=TRUE}
 
@@ -67,15 +65,15 @@ WHERE
 
 ```
 
-```SELECT DISTINCT  ?item ?itemLabel WHERE``` tells SPARQL to fetch everything with the curly brackets and store it in variables called ```item``` and ```itemlabel```. Next we need to tell SPARQL what to put in those variables.
+`SELECT DISTINCT  ?item ?itemLabel WHERE` tells SPARQL to fetch everything with the curly brackets and store it in variables called `item` and `itemlabel`. Next we need to tell SPARQL what to put in those variables.
 
 The query itself has three parts:
 
-```?item wdt:P463 wd:Q123885.``` this queries wikidata for all the entities which have the property 'membership of' (P463) linked to the entity 'The Royal Society' (Q123885). 
+`?item wdt:P463 wd:Q123885.` this queries Wikidata for all the entities which have the property 'membership of' (P463) linked to the entity 'The Royal Society' (Q123885).
 
-```?item wdt:P59 ?dob``` this queries those items for their date of birth (P59) and stores it as an item called ?dob.
+`?item wdt:P59 ?dob` this queries those items for their date of birth (P59) and stores it as an item called ?dob.
 
-```FILTER( ?dob <= '1700-01-01T00:00:00'^^xsd:dateTime).``` this runs a filter and returns only items with a date of birth of before the first of January, 1700.
+`FILTER( ?dob <= '1700-01-01T00:00:00'^^xsd:dateTime).` this runs a filter and returns only items with a date of birth of before the first of January, 1700.
 
 The result is an R dataframe - here are the first ten records:
 
@@ -83,14 +81,13 @@ The result is an R dataframe - here are the first ten records:
 my_query %>% head(10)
 ```
 
-
-What does this have to do with Networking Archives? Both datasets we're using have extensive (though far from complete) linked data in the form of wikipedia links (for people) and wikidata entities (for places). Through this it is easy to join both EMLO and the State Papers Online to this extensive knowledge base and gain a new perspective on the data. 
+What does this have to do with Networking Archives? Both datasets we're using have extensive (though far from complete) linked data in the form of Wikipedia links (for people) and Wikidata entities (for places). Through this it is easy to join both EMLO and the State Papers Online to this extensive knowledge base and gain a new perspective on the data.
 
 ### Charting Birth and Death dates in the Stuart State Papers
 
-The dataset we have constructed from State Papers Online contains very minimal data on each of its subjects: besides a wikipedia link, we've only recorded occasional additional details in a notes field. This makes even partial wikidata linkage compelling, because it can generate, for individuals prominent enough to have a wikipedia page at least, some basic stats on who we have and where they are from. 
+The dataset we have constructed from State Papers Online contains very minimal data on each of its subjects: besides a Wikipedia link, we've only recorded occasional additional details in a notes field. This makes even partial Wikidata linkage compelling, because it can generate, for individuals prominent enough to have a Wikipedia page at least, some basic stats on who we have and where they are from.
 
-For example, using wikidata one can download a list of birth and death dates for those with wikipedia links. First, download a list of *all* those on wikidata with a date of birth before 1700 and after 1500 (the Stuart State Papers begin in 1603):  
+For example, using Wikidata one can download a list of birth and death dates for those with Wikipedia links. First, download a list of *all* those on Wikidata with a date of birth before 1700 and after 1500 (the Stuart State Papers begin in 1603):
 
 ```{r message=FALSE, warning=FALSE, cache=TRUE}
 dates_of_birth = query_wikidata("
@@ -117,20 +114,19 @@ WHERE
 
 This query contains a few more elements:
 
-``` hint:Prior hint:rangeSafe true.``` is an optimizer, telling the wikidata query service that the results of ?dob will all be of the same type. It's needed because the service will time out if the request is so large that it takes more than 60 seconds.  
+`hint:Prior hint:rangeSafe true.` is an optimizer, telling the Wikidata query service that the results of ?dob will all be of the same type. It's needed because the service will time out if the request is so large that it takes more than 60 seconds.
 
-```
-OPTIONAL {
-      ?article schema:about ?item .
-      ?article schema:inLanguage 'en' .
-      FILTER (SUBSTR(str(?article), 1, 25) = 'https://en.wikipedia.org/')
-    }
-```
-This fetches the url for the English-language wikipedia page for each entity (where available), which is what we use to match with the SPO and EMLO datasets.  
+    OPTIONAL {
+          ?article schema:about ?item .
+          ?article schema:inLanguage 'en' .
+          FILTER (SUBSTR(str(?article), 1, 25) = 'https://en.wikipedia.org/')
+        }
 
-The query returns a dataset with around 145,000 individuals, plus their wikipedia link and dates of birth/death. The next step is to join this with the list of wikipedia links in our own people information.
+This fetches the url for the English-language Wikipedia page for each entity (where available), which is what we use to match with the SPO and EMLO datasets.
 
-I've pre-processed two very simple lists, taken from the two datasets on the Networking Archives project, containing the the names of all those who have had Wikipedia entries added to their person record. To match wikidata to the State Papers or EMLO data, I'll just cross-reference the result of each wikidata query against these lists.
+The query returns a dataset with around 145,000 individuals, plus their Wikipedia link and dates of birth/death. The next step is to join this with the list of Wikipedia links in our own people information.
+
+I've pre-processed two very simple lists, taken from the two datasets on the Networking Archives project, containing the the names of all those who have had Wikipedia entries added to their person record. To match Wikidata to the State Papers or EMLO data, I'll just cross-reference the result of each Wikidata query against these lists.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -163,7 +159,7 @@ dates_of_birth_joined %>%
   theme(legend.position = 'bottom', plot.title = element_text(size = 16, face = 'bold')) + facet_wrap(~type, ncol = 1) + labs(title = "Dates of Birth/Death in the State Papers Online People")
 ```
 
-The dates of birth are unsurprising, but I wonder if we are seeing the effects of the English Civil War in the bump in death dates in the 1630s/40s? Many of those found in the State Papers are soldiers, so it is possible. 
+The dates of birth are unsurprising, but I wonder if we are seeing the effects of the English Civil War in the bump in death dates in the 1630s/40s? Many of those found in the State Papers are soldiers, so it is possible.
 
 ### Mapping Places of Birth and Death
 
@@ -192,7 +188,7 @@ WHERE
   ")
 ```
 
-The map below is perhaps surprisingly European: the State Papers data itself is mostly sent from within Britain and Ireland, with some smaller clusters in the Dutch Republic and Paris, but it turns out many of the letters were actually written by individuals born right across Europe - though this does only map a small, elite section of the authors and recipients of letters.  
+The map below is perhaps surprisingly European: the State Papers data itself is mostly sent from within Britain and Ireland, with some smaller clusters in the Dutch Republic and Paris, but it turns out many of the letters were actually written by individuals born right across Europe - though this does only map a small, elite section of the authors and recipients of letters.
 
 ```{r, eval=FALSE}
 
@@ -209,6 +205,7 @@ sf_map = map %>%
   st_as_sf(coords = c('coordinates_longitude', 'coordinates_latitude'))
 sf_map = sf_map %>% st_set_crs(4326)
 ```
+
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 load('sf_map')
 ```
@@ -249,9 +246,9 @@ WHERE
   ")
 ```
 
-Mapping both of these, and plotting some lines running from each individual's place of birth to their place of death shows that, unsurprisingly, 'prominent' individuals (those with Wikipedia pages) in the State Papers tended to migrate towards capital cities - there are clear lines moving towards London, Paris, Madrid, Rome, and Amsterdam. 
+Mapping both of these, and plotting some lines running from each individual's place of birth to their place of death shows that, unsurprisingly, 'prominent' individuals (those with Wikipedia pages) in the State Papers tended to migrate towards capital cities - there are clear lines moving towards London, Paris, Madrid, Rome, and Amsterdam.
 
-Make a master list of birth/death places:  
+Make a master list of birth/death places:
 
 ```{r}
 places_of_birth_death = birthplace %>% 
@@ -269,7 +266,7 @@ places_of_birth_death = birthplace %>%
 
 ```
 
-Use the sf packages to turn this into two separate datasets of points and spatial lines:  
+Use the sf packages to turn this into two separate datasets of points and spatial lines:
 
 ```{r, eval=FALSE}
 points = places_of_birth_death %>% 
@@ -301,7 +298,7 @@ load( 'lines')
 load( 'points_tallied')
 ```
 
-Draw the map:  
+Draw the map:
 
 ```{r}
 ggplot() + 
@@ -325,17 +322,30 @@ ggplot() +
 
 ```
 
+That gravitational pull towards London is striking. Again, these queries can be built up, and one piece of data connected to another. A list of all those with parents born in different country to their birth place would be an interesting starting-point for understanding a second-generation diaspora network.
 
-That gravitational pull towards London is striking. Again, these queries can be built up, and one piece of data connected to another. A list of all those with parents born in different country to their birth place would be an interesting starting-point for understanding a second-generation diaspora network. 
+### Wikidata and EMLO
 
-### Wikidata and EMLO  
+Another benefit of Wikidata is its links to other authority files, including an *Early Modern Letters Online* person ID (P1802). About 8,300 Wikidata entities have EMLO IDs listed - a full list can be downloaded with the following query:
 
-Early Modern Letters Online already has good basic, structured biographical data, and wikidata isn't going to add much there. But the knowledge graph contains other, more detailed structured information (such as membership lists), and combining queries allows us to filter on very specific pieces of information using the power of linked data.
+```{r}
+emlo_ids = query_wikidata("SELECT DISTINCT  ?item ?itemLabel WHERE
+{
+?item wdt:P1802 ?value.
+  
+  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'.}
+  
+  }")
 
-Wikidata's data on family relations helps us to construct complex queries about family trees. We can ask, for example - how many letter authors (or recipients) in EMLO have parents who were at some point imprisoned? This following query will get us a list of everyone with the property 'imprisoned' on wikidata, plus all of their children.
+emlo_ids %>% head(10) %>% select(itemLabel)
+```
+
+EMLO already has good basic, structured biographical data, and Wikidata isn't going to add much there. But the knowledge graph contains other, more detailed structured information (such as membership lists), and combining queries allows us to filter on very specific pieces of information using the power of linked data.
+
+Wikidata's data on family relations helps us to construct complex queries about family trees. We can ask, for example - how many letter authors (or recipients) in EMLO have parents who were at some point imprisoned? This following query will get us a list of everyone with the property 'imprisoned' on Wikidata, plus all of their children.  
 
 ```{r message=FALSE, warning=FALSE, cache=TRUE}
-rs_q = query_wikidata ("SELECT DISTINCT  ?itemLabel ?childLabel ?article ?valueLabel ?dob WHERE
+rs_q = query_wikidata ("SELECT DISTINCT  ?itemLabel ?child ?childLabel ?article ?valueLabel ?dob WHERE
 {
 ?item wdt:P2632 ?value.
 ?item wdt:P40  ?child.
@@ -352,30 +362,30 @@ SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. }
 
 Breaking this down:
 
-```SELECT DISTINCT  ?itemLabel ?childLabel ?article ?valueLabel ?dob WHERE``` listing all the pieces of information we'd like.
+`SELECT DISTINCT  ?itemLabel ?childLabel ?article ?valueLabel ?dob WHERE` listing all the pieces of information we'd like.
 
-```?item wdt:P2632 ?value.``` Get all the items with the property value P2632 (place of detention). Store the person as ?item and the entity for the place of detention as ?value. 
+`?item wdt:P2632 ?value.` Get all the items with the property value P2632 (place of detention). Store the person as ?item and the entity for the place of detention as ?value.
 
-```?item wdt:P40  ?child.``` Get all those with the property P40 (child) for each ?item above
+`?item wdt:P40  ?child.` Get all those with the property P40 (child) for each ?item above
 
-```?child wdt:P569 ?dob.``` Get their dates of birth (for filtering)
+`?child wdt:P569 ?dob.` Get their dates of birth (for filtering)
 
-Again, cross-reference this list against a master list of wikipedia IDs for people on EMLO:  
+This time, we'll cross-reference against the list of EMLO Wikipedia links AND the list of EMLO entities with an EMLO person ID:
 
 ```{r message=FALSE, warning=FALSE}
 
 rs_q %>% 
-  filter(article %in% emlo_wikipedia_links$resource_url) %>% 
+  filter(article %in% emlo_wikipedia_links$resource_url | child %in% emlo_ids$item ) %>% 
   filter(!is.na(article)) %>% 
-  select(person = childLabel, parent = itemLabel)
+  select(person = childLabel, parent = itemLabel) %>% distinct(person, .keep_all = T)
 
 ```
 
-Wikidata has found thirty, including [Carew Raleigh](http://emlo.bodleian.ox.ac.uk/profile/person/e7bef3df-3f0b-4a2d-a737-a4a9b735d2c5), son of Walter Raleigh, and [Horace Walpole](http://emlo.bodleian.ox.ac.uk/profile/person/4063376c-1017-4e2b-aeee-f507cd72dea7), whose father, Robert, was imprisoned in the Tower for 6 months in 1712 for 'venality', as well as [Henrietta Goldolphin](http://emlo.bodleian.ox.ac.uk/profile/person/0074d82b-62ce-4d57-82f1-cf31a6067e49) - her father, John Churchill, first Duke of Marlborough was imprisoned in the Tower in 1692, accused of signing a letter calling for the restoration of James II.  
+Wikidata has found sixty-three, including [Carew Raleigh](http://emlo.bodleian.ox.ac.uk/profile/person/e7bef3df-3f0b-4a2d-a737-a4a9b735d2c5), son of Walter Raleigh, and [Horace Walpole](http://emlo.bodleian.ox.ac.uk/profile/person/4063376c-1017-4e2b-aeee-f507cd72dea7), whose father, Robert, was imprisoned in the Tower for 6 months in 1712 for 'venality', as well as [Henrietta Goldolphin](http://emlo.bodleian.ox.ac.uk/profile/person/0074d82b-62ce-4d57-82f1-cf31a6067e49) - her father, John Churchill, first Duke of Marlborough was imprisoned in the Tower in 1692, accused of signing a letter calling for the restoration of James II.
 
-### Linking letters in the State Papers Online to wikidata
+### Linking letters in the State Papers Online to Wikidata
 
-With these links we can query wikidata and then pass the results to the State Papers metadata. This query, for example, downloads a list of all descendants of James VI of Scotland/James I of England, with a wikipedia page:
+With these links we can query Wikidata and then pass the results to the State Papers metadata. This query, for example, downloads a list of all descendants of James VI of Scotland/James I of England, with a Wikipedia page:
 
 ```{r message=FALSE, warning=FALSE, cache=TRUE}
 jamesdesc = query_wikidata('SELECT DISTINCT ?human ?humanLabel ?dob ?article
@@ -399,11 +409,14 @@ Then we can pull out all the letter records in SPO where the sender *and* recipi
 
 ```{r message=FALSE, warning=FALSE, eval = FALSE}
 
-spo_ids = rbind(spo_mapped_people %>% select(id = X1, wikilink  = X5), spo_added_people %>% select(id = X1, wikilink = `Linked data (if any)`)) %>% 
+spo_ids = rbind(spo_mapped_people %>% 
+                  select(id = X1, wikilink  = X5), spo_added_people %>% select(id = X1, wikilink = `Linked data (if any)`)) %>% 
                   filter(wikilink %in% jamesdesc$article) %>% 
   filter(!is.na(wikilink))
 
-james_network = spo_raw %>% filter(X1 %in% spo_ids$id & X2 %in% spo_ids$id) %>% distinct(X1, X2) %>% graph_from_data_frame() %>% 
+james_network = spo_raw %>% 
+  filter(X1 %in% spo_ids$id & X2 %in% spo_ids$id) %>% 
+  distinct(X1, X2) %>% graph_from_data_frame() %>% 
   as_tbl_graph() %>%
   left_join(spo_mapped_people %>% 
               mutate(X1 = as.character(X1)), 
@@ -412,6 +425,7 @@ james_network = spo_raw %>% filter(X1 %in% spo_ids$id & X2 %in% spo_ids$id) %>% 
 
 
 ```
+
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 load('james_network')
 ```
@@ -429,18 +443,33 @@ And finally, turn this into a network:
   theme_void() + labs(title = "Letter Network of Descendants of James I/VI found in\nState Papers Online", subtitle = "Generated using Wikidata Query Service and SPO metadata") + theme(plot.title = element_text(face = 'bold', size = 16))
 ```
 
-
 ### Some Conclusions
 
-I hope this has shown how Wikidata can add some value as both a way to populate a sparse correspondence dataset with basic metadata, and a way to construct complex queries to highlight groups of individuals in that data. It's important to note that wikidata does not claim to store facts in itself: at its core, wikidata aims to be a repository for knowledge from elsewhere - rather than storing the birth date of Henry Oldenburg, wikidata hopes to store the fact that, say, the *Oxford Dictionary of National Biography* records his birth year as 1619 (this is an ideal scenario, whereas in reality much of the information currently comes from Wikipedia). 
+I hope this has shown how Wikidata can add some value as both a way to populate a sparse correspondence dataset with basic metadata, and a way to construct complex queries to highlight groups of individuals in that data. It's important to note that Wikidata does not claim to store facts in itself: at its core, Wikidata aims to be a repository for knowledge from elsewhere - rather than storing the birth date of Henry Oldenburg, Wikidata hopes to store the fact that, say, the *Oxford Dictionary of National Biography* records his birth year as 1619 (this is an ideal scenario, whereas in reality much of the information currently comes from Wikipedia).
 
-This subtle difference is important, because it means that wikidata is only as good as the references which make it up. Is it ultimately any use for scholarly work? As we've seen, only a small fraction (4,500 out of 30,000) of individuals in the State Papers have been linked to a wikipedia page, so this can only, at the moment, give us additional metadata on relatively prominent individuals. 
+This subtle difference is important, because it means that Wikidata is only as good as the references which make it up. Is it ultimately any use for scholarly work? As we've seen, only a small fraction (4,500 out of 30,000) of individuals in the State Papers have been linked to a Wikipedia page, so this can only, at the moment, give us additional metadata on relatively prominent individuals.
 
-However, one can easily see how this same data structure could be used to store much richer information about individuals, and build interesting and complex queries. Connecting this knowledge graph directly to the State Papers metadata, with letters added as entities and properties such as 'written by' and 'language' would make it much more useful - one could, for example, directly query a knowledge graph and ask for 'all letters written in French, sent by a relative of a monarch', or, 'all letters written by descendants of Louis XIV'. 
+However, one can easily see how this same data structure could be used to store much richer information about individuals, and build interesting and complex queries. Connecting this knowledge graph directly to the State Papers metadata, with letters added as entities and properties such as 'written by' and 'language' would make it much more useful - one could, for example, directly query a knowledge graph and ask for 'all letters written in French, sent by a relative of a monarch', or, 'all letters written by descendants of Louis XIV'.
 
-### Further Reading  
 
-[Official Wikidata SPARQL tutorial](https://www.wikidata.org/wiki/Wikidata:SPARQL_tutorial) - definitely the best starting-point for learning how the service works.
+***  
+### More info on this document {#info}  
 
-[Wikidata SPARQL query service examples](https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples) - a page with tonnes of examples of queries. Again, very useful as starting-points for making your own.  
+Clicking on the MyBinder link above will bring you to an R-Studio instance. In the 'files' window in the bottom-right of R-studio, open the document 'r_and_wikidata.Rmd', which will open this with a live copy of the code, which can be edited and re-run. Be warned it *might* still be a bit of a steep learning curve if you have no experience with R-studio/coding languages.
+
+A few parts won't run live: as we haven't released the full dataset yet, one part of the code 'cheats', and uses a pre-processed object rather than loading up the full State Papers metadata to query directly. So you won't be able to make changes to the section which pulls letters written by descendants of James I/VI. Also, the library 'sf' won't install in the MyBinder build (it needs root priviledges to install a dependency), which means the maps cannot be made - at least for now. The rest, if loaded through myBinder or just directly through a local copy of R-Studio, can be adjusted to try other queries and cross-reference against the people records of the SPO and EMLO datasets.
+
+***  
+
+### Further Reading
+
+[Official Wikidata SPARQL tutorial](https://www.Wikidata.org/wiki/Wikidata:SPARQL_tutorial) - definitely the best starting-point for learning how the service works.
+
+[Wikidata SPARQL query service examples](https://www.Wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples) - a page with tonnes of examples of queries. Again, very useful as starting-points for making your own.
+
+Hotson, Howard, and Thomas Wallnig, eds. 2019. *Reassembling the Republic of Letters in the Digital Age*. Göttingen University Press. https://doi.org/10.17875/gup2019-1146 - has discussion of linked data, particularly chapters I.3 and III.1 on the use of RDF in letter metadata.  
+
+
+***  
+
 
